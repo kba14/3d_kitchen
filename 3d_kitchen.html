@@ -1,0 +1,137 @@
+<!--3d_kitchen.html-->
+<!DOCTYPE html>
+
+<style>
+    body {
+        margin: 0;
+        /*overflow: hidden;*/
+    }
+
+    .menu_bar {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+        width: 100%;
+        /*position: fixed;*/
+    }
+
+    .menu_bar_item {
+        float: left;
+    }
+
+    .menu_bar_item a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+    }
+
+    .menu_bar_item a:hover {
+        background-color: #111;
+    }
+</style>
+
+<html lang="en">
+    <head>
+        <title>A&B Webshop</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!--link rel="stylesheet" href="styles/index.css"-->
+    </head>
+    <body>
+        <ul class="menu_bar">
+            <li class="menu_bar_item"><a href="/">Home</a></li>
+            <li class="menu_bar_item"><a href="/login">Login</a></li>
+            <li class="menu_bar_item"><a href="/register">Register</a></li>
+            <li class="menu_bar_item"><a href="/products">Products</a></li>
+            <li class="menu_bar_item" style="float:right"><a href="/account">Account</a></li>
+        </ul>
+
+        <script src="https://cdn.jsdelivr.net/npm/three@0.122.0/build/three.min.js"></script>
+        <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.122.0/examples/js/controls/OrbitControls.js"></script>
+        <script>
+            ///// Embedding, display BEGIN
+            var scene = new THREE.Scene();
+
+            var aspectRatio = window.innerWidth / window.innerHeight;
+            var camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000);
+            camera.aspect = aspectRatio;
+            camera.updateProjectionMatrix();
+            camera.position.set(0, 3, 7); // Set camera position
+    
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0xC0EEF2, 1);
+            document.body.appendChild(renderer.domElement);
+    
+            var loader = new THREE.GLTFLoader();
+            var gltf;
+            loader.load('./scene.gltf', function (result) {
+                gltf = result;
+                gltf.scene.position.set(3, 0, 0); // Set model position
+                scene.add(gltf.scene);
+                
+                gltf.scene.traverse(function (object) {
+                    if (object.name === 'KitchenAppliances_2') {
+                        //child.material.color.set(0xff0000);
+                        //child.material.needsUpdate = true;
+                        object.addEventListener('click', function (event) {
+                            window.location.href = 'newPage.html';
+                        });
+                    }
+                });
+            });
+    
+            var animate = function () {
+                requestAnimationFrame(animate);
+                /*gltf.scene.rotation.y += 0.01;*/
+                renderer.render(scene, camera);
+            }
+
+            var amb_light = new THREE.AmbientLight(0xffffff, 0.2);
+            var poi_light = new THREE.PointLight(0xffffff, 2);
+            poi_light.position.set(20, 20, 20);
+            
+            scene.add(amb_light);
+            scene.add(poi_light);
+
+            var controls = new THREE.OrbitControls(camera, renderer.domElement);
+            //controls.minPolarAngle = Math.PI / 2; // Fix z axis for rotate
+            //controls.maxPolarAngle = Math.PI / 2; // Fix z axis for rotate
+            controls.enableRotate = false; // Disable rotate
+            controls.enablePan = false; // Disable right-click drag
+            controls.enableZoom = false; // Disable zoom
+    
+            animate();
+            ///// Embedding display END
+
+            ///// Interactivity BEGIN
+            /* var mouse = new THREE.Vector2();
+            document.addEventListener('mousedown', function (event) {
+
+                // Calculate mouse position in normalized device coordinates
+                // (-1 to +1) for both components
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+                // Update the picking ray with the camera and mouse position
+                var raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(mouse, camera);
+
+                // Calculate objects intersecting the picking ray
+                var intersects = raycaster.intersectObjects(scene.children[2].children[0].children[0].children[0].children);
+
+                if (intersects.length > 0) {
+                    if (intersects[0].object.name === 'KitchenAppliances_2') {
+                        window.location.href = "http://google.hu";
+                    }
+                }
+            }, false); */
+            ///// Interactivity END
+        </script>
+    </body>
+</html>
